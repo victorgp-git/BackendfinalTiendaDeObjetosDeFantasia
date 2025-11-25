@@ -1,0 +1,86 @@
+########################################
+# 🌐 FRONTEND (React + Vite)
+########################################
+# Dependencias
+node_modules/
+
+# Builds
+dist/
+build/
+out/
+
+# Archivos de ambiente
+.env
+.env.local
+.env.*.local
+
+# Cachés
+.cache/
+vite.config.ts.timestamp*
+*.tsbuildinfo
+
+# Editor y sistema
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+.history/
+
+
+########################################
+# 🖥 BACKEND (Node + Express + Sequelize)
+########################################
+# Dependencias
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+debug.log
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Archivos de entorno
+.env
+.env.local
+.env.*.local
+
+# SQLite / Sequelize / otras BD locales
+*.sqlite
+*.db
+*.sqlite3
+*.db3
+
+# Carpetas temporales / uploads
+uploads/
+tmp/
+temp/
+
+# Compilación o salida temporal
+*.pid
+*.seed
+*.meta
+
+
+########################################
+# ⚙️ HERRAMIENTAS / SISTEMA
+########################################
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# Otros
+*.swp
+*.swo
