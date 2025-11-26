@@ -17,7 +17,7 @@ const Product = sequelize.define("Product", {
     allowNull: false
   },
   description: DataTypes.STRING,
-  image: DataTypes.STRING,
+  image: DataTypes.TEXT,
   isActive: {
     type: DataTypes.BOOLEAN,
     defaultValue: true

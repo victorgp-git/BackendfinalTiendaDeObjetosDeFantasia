@@ -1,37 +1,67 @@
-import { db } from "../data/db.js";
+import Cart from "../models/cart.model.js";
 
-export const getCartByUser = (req, res) => {
-  const userId = Number(req.params.userId);
-  const items = db.cart.filter(i => i.userId === userId);
-  res.json(items);
-};
+// Obtener carrito por usuario
+export const getCartByUser = async (req, res) => {
+  try {
+    const userId = Number(req.params.userId);
 
-export const addToCart = (req, res) => {
-  const { userId, productId, quantity } = req.body;
+    const items = await Cart.findAll({ where: { userId } });
 
-  let item = db.cart.find(i => i.userId === userId && i.productId === productId);
-
-  if (item) {
-    item.quantity += quantity;
-  } else {
-    db.cart.push({ userId, productId, quantity });
+    res.json(items);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error obteniendo carrito" });
   }
-
-  res.json({ success: true, cart: db.cart });
 };
 
-export const removeFromCart = (req, res) => {
-  const { userId, productId } = req.body;
+// Agregar al carrito
+export const addToCart = async (req, res) => {
+  try {
+    const { userId, productId, quantity } = req.body;
 
-  db.cart = db.cart.filter(
-    i => !(i.userId === userId && i.productId === productId)
-  );
+    let item = await Cart.findOne({ where: { userId, productId } });
 
-  res.json({ success: true });
+    if (item) {
+      item.quantity += quantity;
+      await item.save();
+    } else {
+      item = await Cart.create({ userId, productId, quantity });
+    }
+
+    res.json({ success: true, item });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error agregando al carrito" });
+  }
 };
 
-export const clearCart = (req, res) => {
-  const userId = Number(req.params.userId);
-  db.cart = db.cart.filter(i => i.userId !== userId);
-  res.json({ success: true });
+// Eliminar 1 producto
+export const removeFromCart = async (req, res) => {
+  try {
+    const { userId, productId } = req.body;
+
+    await Cart.destroy({ where: { userId, productId } });
+
+    res.json({ success: true });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error eliminando producto" });
+  }
+};
+
+// Vaciar carrito
+export const clearCart = async (req, res) => {
+  try {
+    const userId = Number(req.params.userId);
+
+    await Cart.destroy({ where: { userId } });
+
+    res.json({ success: true });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error limpiando carrito" });
+  }
 };

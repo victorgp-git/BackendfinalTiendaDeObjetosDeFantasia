@@ -31,4 +31,4 @@ async function seed() {
   }
 }
 sequelize.authenticate();
-//seed();   
+seed();   

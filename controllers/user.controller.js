@@ -1,44 +1,67 @@
-import { db } from "../data/db.js";
+import User from "../models/user.model.js";
 
-export const getAllUsers = (req, res) => {
-  res.json(db.users);
+// Obtener todos los usuarios (solo para pruebas o admin)
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.findAll();
+    res.json(users);
+  } catch (error) {
+    console.error("Error obteniendo usuarios:", error);
+    res.status(500).json({ error: "Error obteniendo usuarios" });
+  }
 };
 
-export const loginUser = (req, res) => {
-  const { correo, password } = req.body;
+// Login de usuario
+export const loginUser = async (req, res) => {
+  try {
+    const { correo, password } = req.body;
 
-  // buscar usuario por correo
-  const user = db.users.find(u => u.correo === correo);
+    const user = await User.findOne({
+      where: { email: correo }
+    });
 
-  if (!user) {
-    return res.status(404).json({ error: "Usuario no encontrado" });
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    // Para este proyecto no tienes passwords reales → login simple
+    return res.json(user);
+
+  } catch (error) {
+    console.error("Error en login:", error);
+    res.status(500).json({ error: "Error en login" });
   }
-
-  // LOGIN FALSO (no hay passwords en tu db)
-  // Para que funcione: si existe, deja entrar
-  return res.json(user);
 };
 
-export const registerUser = (req, res) => {
-  const { nombre, correo } = req.body;
+// Registrar usuario
+export const registerUser = async (req, res) => {
+  try {
+    const { nombre, correo, password } = req.body;
 
-  if (!nombre || !correo) {
-    return res.status(400).json({ error: "Faltan datos" });
+    if (!nombre || !correo || !password) {
+      return res.status(400).json({ error: "Faltan datos" });
+    }
+
+    // Revisar si existe
+    const exists = await User.findOne({
+      where: { email: correo }
+    });
+
+    if (exists) {
+      return res.status(400).json({ error: "Correo ya registrado" });
+    }
+
+    // Crear nuevo usuario
+    const newUser = await User.create({
+      name: nombre,
+      email: correo,
+      password // ⚠ en tu proyecto no estás encriptando → OK por ahora
+    });
+
+    res.json({ success: true, user: newUser });
+
+  } catch (error) {
+    console.error("Error registrando usuario:", error);
+    res.status(500).json({ error: "Error registrando usuario" });
   }
-
-  const exists = db.users.some(u => u.correo === correo);
-  if (exists) {
-    return res.status(400).json({ error: "Correo ya registrado" });
-  }
-
-  const newUser = {
-    id: db.users.length + 1,
-    nombre,
-    correo,
-    activo: true
-  };
-
-  db.users.push(newUser);
-
-  res.json({ success: true, user: newUser });
 };

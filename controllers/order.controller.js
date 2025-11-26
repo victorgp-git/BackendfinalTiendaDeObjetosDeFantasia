@@ -1,31 +1,49 @@
-import { db } from "../data/db.js";
+import Order from "../models/order.model.js";
+import Cart from "../models/cart.model.js";
 
-export const createOrder = (req, res) => {
-  const { userId, items, total, shipping, paymentMethod } = req.body;
+// Crear orden
+export const createOrder = async (req, res) => {
+  try {
+    const { userId, total, shipping, paymentMethod } = req.body;
 
-  const orderId = db.orders.length + 200;
+    // Crear orden
+    const order = await Order.create({
+      userId,
+      total,
+      estado: "Completada",
+      fecha: new Date().toISOString().split("T")[0],
+      shipping,
+      paymentMethod
+    });
 
-  const newOrder = {
-    id: orderId,
-    cliente: userId,
-    total,
-    estado: "Completada",
-    fecha: new Date().toISOString().split("T")[0]
-  };
+    // Limpiar carrito del usuario
+    await Cart.destroy({
+      where: { userId }
+    });
 
-  db.orders.push(newOrder);
+    res.json({ success: true, orderId: order.id });
 
-  // limpiar carrito
-  db.cart = db.cart.filter(i => i.userId !== userId);
-
-  res.json({ success: true, orderId });
+  } catch (error) {
+    console.error("Error creando orden:", error);
+    res.status(500).json({ error: "Error creando orden" });
+  }
 };
 
-export const getOrderById = (req, res) => {
-  const id = Number(req.params.id);
-  const order = db.orders.find(o => o.id === id);
+// Obtener orden por ID
+export const getOrderById = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
 
-  if (!order) return res.status(404).json({ error: "Orden no encontrada" });
+    const order = await Order.findByPk(id);
 
-  res.json(order);
+    if (!order) {
+      return res.status(404).json({ error: "Orden no encontrada" });
+    }
+
+    res.json(order);
+
+  } catch (error) {
+    console.error("Error obteniendo orden:", error);
+    res.status(500).json({ error: "Error obteniendo orden" });
+  }
 };
