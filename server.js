@@ -15,6 +15,7 @@ import userRoutes from "./routes/user.routes.js";
 import cartRoutes from "./routes/cart.routes.js";
 import orderRoutes from "./routes/order.routes.js";
 
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -26,6 +27,11 @@ app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
+
+app.post("/test", (req, res) => {
+  console.log("BODY RECIBIDO:", req.body);
+  res.json({ recibido: req.body });
+});
 
 // Conexión BD + sync
 sequelize
