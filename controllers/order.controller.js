@@ -1,25 +1,23 @@
+// controllers/order.controller.js
 import Order from "../models/order.model.js";
 import Cart from "../models/cart.model.js";
 
-// Crear orden
+
 export const createOrder = async (req, res) => {
   try {
-    const { userId, total, shipping, paymentMethod } = req.body;
+    const { total, userId } = req.body;
 
-    // Crear orden
+    // Crear orden SOLO con columnas reales
     const order = await Order.create({
-      userId,
       total,
       estado: "Completada",
-      fecha: new Date().toISOString().split("T")[0],
-      shipping,
-      paymentMethod
+      fecha: new Date().toISOString().split("T")[0]
     });
 
-    // Limpiar carrito del usuario
-    await Cart.destroy({
-      where: { userId }
-    });
+    // limpiar carrito si quieres
+    if (userId) {
+      await Cart.destroy({ where: { userId } });
+    }
 
     res.json({ success: true, orderId: order.id });
 
@@ -29,7 +27,7 @@ export const createOrder = async (req, res) => {
   }
 };
 
-// Obtener orden por ID
+
 export const getOrderById = async (req, res) => {
   try {
     const id = Number(req.params.id);

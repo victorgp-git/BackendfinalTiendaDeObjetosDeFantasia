@@ -2,21 +2,22 @@ import { DataTypes } from "sequelize";
 import sequelize from "../data/db.js";
 
 const Order = sequelize.define("Order", {
-  id: { 
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: false // porque tu JSON ya trae IDs
-  },
-  cliente: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
+  // NO DEFINIMOS ID — lo maneja PostgreSQL
   total: {
     type: DataTypes.FLOAT,
     allowNull: false
   },
-  estado: DataTypes.STRING,
-  fecha: DataTypes.STRING
+  estado: {
+    type: DataTypes.STRING,
+    defaultValue: "Completada"
+  },
+  fecha: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+}, {
+  timestamps: true,          // tu BD ya tiene createdAt / updatedAt
+  freezeTableName: true      // evita pluralizaciones raras
 });
 
 export default Order;
