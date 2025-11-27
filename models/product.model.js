@@ -5,37 +5,22 @@ const Product = sequelize.define("Product", {
   id: { 
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true 
+    autoIncrement: false // tu JSON ya trae IDs
   },
   name: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  category: {
-    type: DataTypes.STRING
-  },
+  category: DataTypes.STRING,
   price: {
     type: DataTypes.FLOAT,
     allowNull: false
   },
-  description: {
-    type: DataTypes.STRING
-  },
-  image: {
-    type: DataTypes.TEXT
-  },
+  description: DataTypes.STRING,
+  image: DataTypes.TEXT,
   isActive: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
-  },
-  
-  isBestSeller: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  },
-  isNew: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
   }
 });
 
